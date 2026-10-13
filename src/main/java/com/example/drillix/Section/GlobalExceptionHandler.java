@@ -14,5 +14,16 @@ public class GlobalExceptionHandler {
                .status(HttpStatus.BAD_REQUEST)
                .body(e.getMessage());
     }
+
+        // Ошибки генерации: нет оборудования, некорректный ответ AI и т.п.
+    // Это не «сломанный сервер» (500), а «операция невозможна сейчас» —
+    // возвращаем 409 Conflict: конфликт состояния. Можно и 400,
+    // но 409 честнее: запрос правильный, а вот данные системы не готовы
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<String> handleGenerationState(IllegalStateException e) {
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)   // 409
+                .body(e.getMessage());
+    }
     
 }
