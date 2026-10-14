@@ -4,7 +4,7 @@ import java.util.List;
 
 public record AiBhaResponseDto( 
     
-    String justification,
+    String justtification,
 
     List<AiElement> elements
 

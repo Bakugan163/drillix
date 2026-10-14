@@ -34,6 +34,9 @@ public class BhaGenerationService {
 
     // Готовый парсер JSON — тоже один раз, он без состояния
     private final ObjectMapper objectMapper = new ObjectMapper();
+        // Ключ из application.properties — Spring сам подставит значение
+    @org.springframework.beans.factory.annotation.Value("${spring.ai.openai.api-key}")
+    private String apiKey;
 
 
 
@@ -72,7 +75,7 @@ public class BhaGenerationService {
      }
 
      private String currentModelName() {
-        return "nvidia/nemotron-3-ultra-550b-a55b:free";
+        return "nemotron-3-ultra-550b-a55b:free";
     }
 
      @Transactional
@@ -91,8 +94,9 @@ public class BhaGenerationService {
 
     }
 
-    private AiCall callAi(Section section, List<Equipment> available) {
-        // Часть 1: параметры секции
+        private AiCall callAi(Section section, List<Equipment> available) {
+
+        // --- Часть 1: параметры секции (как было) ---
         String sectionInfo = """
                 Тип секции: %s
                 Интервал: %s–%s м
@@ -108,16 +112,28 @@ public class BhaGenerationService {
                 section.getMaxZenithAngle() != null ? section.getMaxZenithAngle() : "не задан",
                 section.getDrillingCondition() != null ? section.getDrillingCondition() : "не заданы");
 
-        // Часть 2: справочник — сгруппированный по типам список с id
+        // --- Часть 2: справочник ---
         String catalogInfo = available.stream()
-                .map(e -> "- #%d [%s] %s (%s мм)".formatted(
+                .map(e -> "- #%d [%s] %s (диаметр %s мм)".formatted(
                         e.getId(), e.getType(), e.getName(), e.getDiameter()))
                 .collect(java.util.stream.Collectors.joining("\n"));
 
-        // Часть 3: инструкция + формат ответа
+        // --- Часть 3: системная инструкция ---
         String systemPrompt = """
                 Ты — опытный технолог по бурению. Твоя задача — подобрать компоновку
                 низа бурильной колонны (КНБК) для секции скважины.
+
+                ТЕРМИНОЛОГИЯ. В тексте justtification и params используй ТОЛЬКО
+                нормативные термины отрасли:
+                - УБТ (утяжелённые бурильные трубы) — НЕ «буровые карандаши»,
+                  НЕ «буровые колонны», НЕ «тяжелые буровые трубы»
+                - НУБТ (немагнитные УБТ)
+                - долото, калибратор, стабилизатор, переводник
+                - ВЗД (винтовой забойный двигатель)
+                - РУС (роторная управляемая система)
+                - телесистема (MWD/LWD)
+                Пиши как российский технолог в техническом документе, без сленга
+                и без кальки с английского.
 
                 ПРАВИЛА:
                 1. Элементы компоновки перечисляй от долота вверх.
@@ -126,7 +142,15 @@ public class BhaGenerationService {
                    позиции справочника, ЛИБО (если подходящего оборудования нет)
                    свободное описание: type + params.
                 4. Не выдумывай equipmentId — используй только id из списка.
-                5. Ответ дай СТРОГО в JSON, без пояснений до и после:
+                5. Если элемента нет в справочнике, в поле type пиши ТОЛЬКО одно
+                   из этих значений: BIT, CALIPER, STABILIZER, MOTOR, RSS, MWD,
+                   NMDC, DC, SUB. Никаких других значений: не JARS, не HWDP,
+                   не DRILL_COLLARS, не BIT_SUB, не CROSSOVER.
+                6. Внутри текста полей НЕ ИСПОЛЬЗУЙ двойные кавычки. Дюймы пиши
+                   словом: 8 дюймов, а не 8".
+                7. Ответ дай СТРОГО в JSON, без пояснений до и после, без
+                   markdown-блоков. Проверь: запятые между элементами, кавычки
+                   закрыты, скобки парные. Формат ответа:
                 {
                   "justtification": "текстовое обоснование выбора",
                   "elements": [
@@ -138,32 +162,65 @@ public class BhaGenerationService {
 
         String userPrompt = "СЕКЦИЯ:\n" + sectionInfo + "\nДОСТУПНОЕ ОБОРУДОВАНИЕ:\n" + catalogInfo;
 
-        // === ВЫЗОВ МОДЕЛИ ===
-
-        String rawResponse = chatClient.prompt()
-                .system(systemPrompt)
-                .user(userPrompt)
-                .call()
-                .content();
-
-        // rawResponse — то, что ответила модель, строкой.
-        // Это и есть наш raw_ai_response для аудита!
-        System.out.println("RAW AI RESPONSE: " + rawResponse);
-
-        // === ПАРСИНГ: JSON-строка → наш DTO ===
-
-        // Модель может обернуть ответ в ```json ... ``` — чистим
-        String json = rawResponse
-                .replace("```json", "")
-                .replace("```", "")
-                .trim();
-
+        // === ПРЯМОЙ ВЫЗОВ BOTHUB (вместо chatClient) ===
         try {
+            // Экранируем промпты для JSON (кавычки, переносы строк)
+            String systemJson = objectMapper.writeValueAsString(systemPrompt);
+            String userJson = objectMapper.writeValueAsString(userPrompt);
+
+            // Тело запроса — как в успешном curl
+            String requestBody = """
+                    {
+                      "model": "nemotron-3-ultra-550b-a55b:free",
+                      "messages": [
+                        {"role": "system", "content": %s},
+                        {"role": "user", "content": %s}
+                      ],
+                      "response_format": {"type": "json_object"}
+                    }
+                    """.formatted(systemJson, userJson);
+
+            java.net.http.HttpClient client = java.net.http.HttpClient.newHttpClient();
+
+            java.net.http.HttpRequest request = java.net.http.HttpRequest.newBuilder()
+                    .uri(java.net.URI.create("https://openai.bothub.chat/v1/chat/completions"))
+                    .header("Authorization", "Bearer " + apiKey)
+                    .header("Content-Type", "application/json")
+                    .POST(java.net.http.HttpRequest.BodyPublishers.ofString(requestBody))
+                    .build();
+
+            java.net.http.HttpResponse<String> response =
+                    client.send(request, java.net.http.HttpResponse.BodyHandlers.ofString());
+
+            // === ДИАГНОСТИКА: статус и тело ответа сервера ===
+            System.out.println("=== HTTP STATUS: " + response.statusCode());
+            System.out.println("=== BODY: " + response.body());
+
+            if (response.statusCode() != 200) {
+                throw new IllegalStateException(
+                        "Bothub ответил " + response.statusCode() + ": " + response.body());
+            }
+
+            // 200: достаём текст ответа модели из JSON
+            String content = objectMapper.readTree(response.body())
+                    .path("choices").get(0).path("message").path("content").asText();
+
+            System.out.println("=== RAW AI RESPONSE ===");
+            System.out.println(content);
+
+            // Чистим возможную обёртку ```json и парсим в наш DTO
+            String json = content
+                    .replace("```json", "")
+                    .replace("```", "")
+                    .trim();
+
             AiBhaResponseDto parsed = objectMapper.readValue(json, AiBhaResponseDto.class);
-            return new AiCall(parsed, rawResponse);
+            return new AiCall(parsed, content);
+
+        } catch (IllegalStateException e) {
+            throw e;   // наши ошибки — наверх без изменений
         } catch (Exception e) {
-            throw new IllegalStateException(
-                    "Ответ модели не удалось разобрать как JSON: " + rawResponse);
+            throw new IllegalStateException("Ошибка вызова AI: " + e.getMessage(), e);
         }
     }
     
@@ -258,7 +315,7 @@ public class BhaGenerationService {
         recommendation.setSection(section);
         recommendation.setBha(bha);
         recommendation.setStatus(RecommendationStatus.DRAFT);
-        recommendation.setJusttification(aiResponse.justification());
+        recommendation.setJusttification(aiResponse.justtification());
         recommendation.setModel(modelName);
         recommendation.setRawResponse(rawAiResponse);
         recommendation = recommendationRepository.save(recommendation);

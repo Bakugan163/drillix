@@ -10,6 +10,7 @@ public enum  EquipmentType {
     MWD,
     LWD,
     NMDC,
+    DC,
     SUB 
     
 }
