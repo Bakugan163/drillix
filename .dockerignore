@@ -1,0 +1,20 @@
+# Build output and local IDE metadata
+target/
+.git/
+.vscode/
+.idea/
+build/
+node_modules/
+
+# Archives and logs
+*.zip
+*.log
+
+# Never send local credentials to the Docker build context
+.env
+.env.*
+!.env.example
+
+# H2 generates these at runtime; only the database file is used as the initial seed.
+data/*.lock.db
+data/*.trace.db

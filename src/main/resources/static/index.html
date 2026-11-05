@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#101b2c">
+  <meta name="description" content="Drillix — инженерная платформа для проектирования и AI-подбора КНБК.">
+  <title>Drillix — AI-подбор КНБК</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Авторизация -->
+  <div id="login-screen" class="login-screen">
+    <section class="login-visual" aria-label="Drillix — инженерная платформа">
+      <div class="login-visual-top">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 40 40" fill="none">
+            <path d="M20 4 33 11.5V28.5L20 36 7 28.5V11.5L20 4Z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M20 11V29M13.5 14.5 20 18.5 26.5 14.5M13.5 25.5 20 21.5 26.5 25.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        <span class="login-visual-brand">Drillix</span>
+        <span class="login-visual-tag">ENGINEERING WORKSPACE</span>
+      </div>
+
+      <div class="login-visual-copy">
+        <p class="eyebrow">ИНЖЕНЕРНАЯ ПЛАТФОРМА</p>
+        <h2>Точность в каждой<br>секции скважины.</h2>
+        <p>Проектируйте скважины, управляйте оборудованием и подбирайте компоновку низа бурильной колонны в одном рабочем пространстве.</p>
+      </div>
+
+      <div class="login-visual-art" aria-hidden="true">
+        <div class="art-coordinate art-coordinate-top">N 54° 18′ 24″</div>
+        <svg viewBox="0 0 520 300" fill="none" role="presentation">
+          <path d="M0 48H520M0 98H520M0 148H520M0 198H520M0 248H520" stroke="rgba(196,214,230,.12)" stroke-width="1"/>
+          <path d="M60 0V300M120 0V300M180 0V300M240 0V300M300 0V300M360 0V300M420 0V300M480 0V300" stroke="rgba(196,214,230,.10)" stroke-width="1"/>
+          <path d="M260 12V90C260 118 260 130 278 151C296 172 313 185 313 208V286" stroke="rgba(148,163,184,.45)" stroke-width="24" stroke-linecap="round"/>
+          <path d="M260 12V90C260 118 260 130 278 151C296 172 313 185 313 208V286" stroke="#2dd4bf" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M235 24H285M235 42H285M235 60H285M235 78H285" stroke="rgba(226,242,249,.58)" stroke-width="1.5"/>
+          <path d="M288 164 309 143M296 174 317 153M304 184 325 163" stroke="#2dd4bf" stroke-width="1.5" stroke-linecap="round"/>
+          <circle cx="260" cy="90" r="6" fill="#101b2c" stroke="#5eead4" stroke-width="2"/>
+          <circle cx="313" cy="208" r="6" fill="#101b2c" stroke="#5eead4" stroke-width="2"/>
+          <path d="M333 208H416M333 90H386" stroke="rgba(226,242,249,.45)" stroke-width="1" stroke-dasharray="4 5"/>
+          <text x="394" y="84" fill="#b8c7d8" font-size="10" letter-spacing="2">SECTION 01</text>
+          <text x="423" y="202" fill="#b8c7d8" font-size="10" letter-spacing="2">BUILD</text>
+          <path d="M32 286H488" stroke="rgba(196,214,230,.22)" stroke-width="1"/>
+        </svg>
+        <div class="art-coordinate art-coordinate-bottom">DRILLING DESIGN / 01</div>
+      </div>
+
+      <div class="login-visual-footer">
+        <span>DRILLIX / 01</span>
+        <span>AI-ASSISTED ENGINEERING</span>
+      </div>
+    </section>
+
+    <section class="login-panel">
+      <div class="login-panel-top">
+        <span class="mobile-brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 40 40" fill="none">
+            <path d="M20 4 33 11.5V28.5L20 36 7 28.5V11.5L20 4Z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M20 11V29M13.5 14.5 20 18.5 26.5 14.5M13.5 25.5 20 21.5 26.5 25.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        <span>Защищённый вход</span>
+        <span class="login-panel-lock" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <rect x="5" y="10" width="14" height="11" rx="2" stroke="currentColor" stroke-width="1.6"/>
+            <path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+        </span>
+      </div>
+
+      <form id="login-form" class="login-card">
+        <div class="login-heading">
+          <p class="login-eyebrow">РАБОЧЕЕ ПРОСТРАНСТВО</p>
+          <h1>Войти в систему</h1>
+          <p class="muted">Продолжите работу с проектами скважин и подбором КНБК.</p>
+        </div>
+
+        <label for="login-username">Логин
+          <input id="login-username" name="username" required autocomplete="username" placeholder="Введите логин">
+        </label>
+        <label for="login-password">Пароль
+          <input id="login-password" name="password" type="password" required autocomplete="current-password" placeholder="Введите пароль">
+        </label>
+
+        <button type="submit" class="btn primary login-submit">
+          <span>Войти в систему</span>
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M5 12h13M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+
+        <div class="login-register">
+          <span>Впервые в Drillix?</span>
+          <button type="button" class="btn register-link" id="show-register">Создать аккаунт</button>
+        </div>
+        <p id="login-error" class="form-error" hidden></p>
+      </form>
+
+      <footer class="login-footer">
+        <span>© 2026 Drillix</span>
+        <span>Инженерная платформа для бурения</span>
+      </footer>
+    </section>
+  </div>
+
+  <!-- Основное приложение -->
+  <div id="app" class="app" hidden>
+    <aside class="sidebar">
+      <a class="brand" href="#/wells" aria-label="Drillix — на главную">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 40 40" fill="none">
+            <path d="M20 4 33 11.5V28.5L20 36 7 28.5V11.5L20 4Z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M20 11V29M13.5 14.5 20 18.5 26.5 14.5M13.5 25.5 20 21.5 26.5 25.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        <span class="brand-word">Drillix</span>
+        <span class="brand-badge">AI</span>
+      </a>
+
+      <div class="sidebar-section-label">РАБОЧЕЕ ПРОСТРАНСТВО</div>
+      <nav id="nav" aria-label="Основная навигация">
+        <button type="button" data-page="wells">
+          <span class="nav-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M4 20V9l8-5 8 5v11M8 20v-6h8v6M9 9h.01M15 9h.01" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          <span>Скважины</span>
+        </button>
+        <button type="button" data-page="equipment">
+          <span class="nav-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.64 5.64l2.12 2.12m8.48 8.48 2.12 2.12m0-12.72-2.12 2.12m-8.48 8.48-2.12 2.12" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg>
+          </span>
+          <span>Оборудование</span>
+        </button>
+        <button type="button" data-page="users">
+          <span class="nav-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3.5" stroke="currentColor" stroke-width="1.7"/><path d="M2.8 20v-1.4A5.6 5.6 0 0 1 8.4 13h1.2a5.6 5.6 0 0 1 5.6 5.6V20M16 4.8a3.5 3.5 0 0 1 0 6.6M17 13.3a5.5 5.5 0 0 1 4.2 5.3v1.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+          </span>
+          <span>Пользователи</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-spacer"></div>
+
+      <div class="sidebar-note">
+        <span class="sidebar-note-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><path d="m12 3 1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="m19 16 .9 2.1L22 19l-2.1.9L19 22l-.9-2.1L16 19l2.1-.9L19 16Z" fill="currentColor"/></svg>
+        </span>
+        <span class="sidebar-note-copy">
+          <strong>Drillix AI</strong>
+          <small>Интеллектуальный подбор</small>
+        </span>
+      </div>
+
+      <div class="sidebar-footer">
+        <button type="button" id="logout-btn" class="logout-button">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M10 17l5-5-5-5M15 12H3M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>Выйти из аккаунта</span>
+        </button>
+      </div>
+    </aside>
+
+    <div class="main-shell">
+      <header class="topbar">
+        <div class="topbar-heading">
+          <span class="topbar-label">DRILLIX <span>/</span> ENGINEERING</span>
+          <span class="topbar-title">Рабочее пространство</span>
+        </div>
+        <div class="topbar-actions">
+          <div class="topbar-context">
+            <span class="status-dot" aria-hidden="true"></span>
+            <span>AI-подбор КНБК</span>
+          </div>
+          <div class="user-chip">
+            <span class="user-avatar" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="3.5" stroke="currentColor" stroke-width="1.6"/><path d="M5 20v-1.2A5.8 5.8 0 0 1 10.8 13h2.4a5.8 5.8 0 0 1 5.8 5.8V20" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+            </span>
+            <span id="current-user" class="user-name"></span>
+          </div>
+        </div>
+      </header>
+
+      <main class="main">
+        <div id="breadcrumbs" class="breadcrumbs" aria-label="Хлебные крошки"></div>
+        <div id="content"></div>
+      </main>
+
+      <footer class="app-footer">
+        <div class="footer-left">
+          <span class="footer-brand">DRILLIX</span>
+          <span>© 2026 · Инженерная платформа</span>
+        </div>
+        <div class="footer-right">
+          <span class="footer-dot" aria-hidden="true"></span>
+          <span>Проектирование и подбор КНБК</span>
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <!-- Модальное окно -->
+  <div id="modal" class="modal" hidden>
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-header">
+        <div class="modal-heading-copy">
+          <span class="modal-eyebrow">DRILLIX / WORKSPACE</span>
+          <h2 id="modal-title"></h2>
+        </div>
+        <button type="button" id="modal-close" class="icon-btn" aria-label="Закрыть окно">×</button>
+      </div>
+      <div id="modal-body"></div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
